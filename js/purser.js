@@ -2,12 +2,17 @@ var ownedAccounts = [];
 var list = document.getElementById('messageTable');
 var tableCount = 0;
 var accountCount = document.getElementById("accountCount");
+var passwords;
+
+
 
 // Update UI after succesful sign in
 function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
     authorizeButton.style.display = 'none';
     signoutButton.style.display = 'block';
+    fetch('passwords.json').then(response => response.text()).then(fileContent => passwords = fileContent)
+
     searchMessages(searchQueries, getMessages);
   } else {
     authorizeButton.style.display = 'block';
@@ -17,14 +22,22 @@ function updateSigninStatus(isSignedIn) {
 
 // Add account entry to the HTML list
 function addAccountEntry(message) {
+
+  var tableClass = "danger";
+  var storedString = "No";
+
+  if(message.stored) {
+    tableClass = "success";
+    storedString = "Yes";
+  }
+
   tableCount++;
   var messageEntry = document.createElement('tr');
   messageEntry.innerHTML =  '<th scope="row">' + tableCount + '</th>' + 
                             '<td><a href="#" class="mr-2"><img style="opacity: 0.2" src="/img/mail.svg" height="18px" data-title="' + message.title + '" data-body="' + message.body + '" onclick="showMessage(this)"></a> ' + message.from + '</td>' + 
                             '<td>' + message.to + '</td>' + 
-                            '<td><a target="_blank" href="http://' + message.website + '">' + message.website + '</a></td>'
-                            // '<td class="text-success table-success">Yes</td>'
-                            ;
+                            '<td><a target="_blank" href="http://' + message.website + '">' + message.website + '</a></td>' +
+                            '<td class="text-' + tableClass +'  table-' + tableClass + '">' + storedString + '</td>';
   list.appendChild(messageEntry);
   accountCount.innerText = tableCount;
 }
@@ -77,6 +90,7 @@ function addMessage(message) {
     'from': '',
     'fromEmail': '',
     'website': '',
+    'stored': false
   }  
 
   // Process sender details
@@ -95,6 +109,11 @@ function addMessage(message) {
     websiteName = (messageObject.website).split('.')[0];
     messageObject.from = websiteName.charAt(0).toUpperCase() + websiteName.slice(1);
   }
+
+  // Check if account is stored in password manager
+
+  if(passwords.search(messageObject.website) > 0) { messageObject.stored = true };
+  if(passwords.search(messageObject.from) > 0) { messageObject.stored = true };
 
   // Remove message if it's a duplicate
   var isDuplicate = ownedAccounts.find(item => item.from === messageObject.from);
