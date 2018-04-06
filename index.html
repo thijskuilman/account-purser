@@ -21,7 +21,17 @@
               </p>
             </div>
           </div>
-          
+
+          <div class="card bg-light mb-4 mt-3" id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+            <div class="card-header">Account Purser</div>
+            <div class="card-body">
+              <h5 class="card-title text-center">
+                <img src="/img/drop_file.svg" width="96px">
+                Drag an export (JSON, txt, CSV..) of a password manager here
+              </h5>
+            </div>
+          </div>
+                    
           <h2 class="mb-3 mt-4">List of your accounts (<span id="accountCount">0</span>)</h2>
           <pre id="content"></pre>
 
@@ -42,6 +52,7 @@
       </div>
     </div>
 
+    <script type="text/javascript" src="/filedrag.js"></script>
     <script type="text/javascript" src="/search_queries.js"></script>
     <script type="text/javascript" src="/js/purser.js"></script>
     <script type="text/javascript" src="/js/gmail-api.js"></script>

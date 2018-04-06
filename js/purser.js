@@ -2,16 +2,20 @@ var ownedAccounts = [];
 var list = document.getElementById('messageTable');
 var tableCount = 0;
 var accountCount = document.getElementById("accountCount");
-var passwords;
 
-
+// Reset list and perform searches again. TODO: store list in memory
+function resetList() {
+  list.innerHTML = '';
+  tableCount = 0;
+  ownedAccounts = [];
+  searchMessages(searchQueries, getMessages);
+}
 
 // Update UI after succesful sign in
 function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
     authorizeButton.style.display = 'none';
     signoutButton.style.display = 'block';
-    fetch('passwords.json').then(response => response.text()).then(fileContent => passwords = fileContent)
 
     searchMessages(searchQueries, getMessages);
   } else {
@@ -23,12 +27,17 @@ function updateSigninStatus(isSignedIn) {
 // Add account entry to the HTML list
 function addAccountEntry(message) {
 
-  var tableClass = "danger";
-  var storedString = "No";
+  var tableClass = "none";
+  var storedString = "No file dropped.";
 
-  if(message.stored) {
-    tableClass = "success";
-    storedString = "Yes";
+  if(passwords != "") {
+    if(message.stored) {
+      tableClass = "success";
+      storedString = "Yes";
+    } else {
+      tableClass = "danger";
+      storedString = "No";
+    }
   }
 
   tableCount++;
