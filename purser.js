@@ -1,4 +1,5 @@
 var ownedAccounts = [];
+var list = document.getElementById('content');
 
 // Update UI after succesful sign in
 function updateSigninStatus(isSignedIn) {
@@ -14,9 +15,8 @@ function updateSigninStatus(isSignedIn) {
 
 // Add account entry to the HTML list
 function addAccountEntry(message) {
-  var list = document.getElementById('content');
-  var entryContent = document.createTextNode(message + '\n');
-  list.appendChild(entryContent);
+  var messageEntry = document.createTextNode(message.from + '\n');
+  list.appendChild(messageEntry);
 }
 
 // Search for messages in your inbox
@@ -51,12 +51,12 @@ function getMessages(messages) {
         'userId': 'me',
         'id': message.id,
       });
-      request.execute(addToMessageArray);
+      request.execute(addMessage);
   });
 }
 
-
-function addToMessageArray(message) {
+// Add a formatted message to ownedAccounts
+function addMessage(message) {
   var messageObject = {
     'title': message.payload.headers.find(headerItem => headerItem.name === 'Subject').value,
     'body': message.snippet,
@@ -66,13 +66,17 @@ function addToMessageArray(message) {
 
   // Process sender details
   var sender = message.payload.headers.find(headerItem => headerItem.name === 'From').value;
-  messageObject.fromEmail = sender.substring( sender.indexOf( '<' ) + 1, sender.indexOf( '>' ) );
-  messageObject.from = sender.replace('<' + messageObject.fromEmail + '>', '').replace('"', '').replace('"', '');
+  messageObject.fromEmail = (sender.substring( sender.indexOf( '<' ) + 1, sender.indexOf( '>' ))).trim();
+  messageObject.from = (sender.replace('<' + messageObject.fromEmail + '>', '').replace('"', '').replace('"', '')).trim();
   if(messageObject.from == ""){ 
     messageObject.from = messageObject.fromEmail 
   }
 
-  // Add account to ownedAccounts
-  addAccountEntry(messageObject.from);
-  ownedAccounts.push(messageObject);
+  // Remove message if its a duplicate
+  var isDuplicate = ownedAccounts.find(item => item.from === messageObject.from);
+  if(!isDuplicate) {
+    addAccountEntry(messageObject);
+    ownedAccounts.push(messageObject);
+  }
+  
 }
