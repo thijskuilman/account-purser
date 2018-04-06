@@ -90,17 +90,10 @@ function addMessage(message) {
   } else {
     messageObject.website = (messageObject.from).split('@')[1]; 
   }
-
-
-
+  
   if(messageObject.from.indexOf('@') > -1 || messageObject.from == ""){ 
     websiteName = (messageObject.website).split('.')[0];
     messageObject.from = websiteName.charAt(0).toUpperCase() + websiteName.slice(1);
-  }
-
-  if(messageObject.website == 'musegames.com') {
-    console.log(messageObject);
-    console.log(sender);
   }
 
   // Remove message if it's a duplicate
