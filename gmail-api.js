@@ -39,22 +39,6 @@ function initClient() {
 }
 
 /**
- *  Called when the signed in status changes, to update the UI
- *  appropriately. After a sign-in, the API is called.
- */
-function updateSigninStatus(isSignedIn) {
-  if (isSignedIn) {
-    authorizeButton.style.display = 'none';
-    signoutButton.style.display = 'block';
-    // listLabels();
-    listMessages('Thank you for registering', retrieveContent);
-  } else {
-    authorizeButton.style.display = 'block';
-    signoutButton.style.display = 'none';
-  }
-}
-
-/**
  *  Sign in the user upon button click.
  */
 function handleAuthClick(event) {
@@ -66,16 +50,4 @@ function handleAuthClick(event) {
  */
 function handleSignoutClick(event) {
   gapi.auth2.getAuthInstance().signOut();
-}
-
-/**
- * Append a pre element to the body containing the given message
- * as its text node. Used to display the results of the API call.
- *
- * @param {string} message Text to be placed in pre element.
- */
-function appendPre(message) {
-  var pre = document.getElementById('content');
-  var textContent = document.createTextNode(message + '\n');
-  pre.appendChild(textContent);
 }

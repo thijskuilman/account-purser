@@ -1,8 +1,26 @@
-/**
- * Print all Labels in the authorized user's inbox. If no labels
- * are found an appropriate message is printed.
- */
-function listMessages(query, callback) {
+var ownedAccounts = [];
+
+// Update UI after succesful sign in
+function updateSigninStatus(isSignedIn) {
+  if (isSignedIn) {
+    authorizeButton.style.display = 'none';
+    signoutButton.style.display = 'block';
+    searchMessages('Thank you for registering', getMessages);
+  } else {
+    authorizeButton.style.display = 'block';
+    signoutButton.style.display = 'none';
+  }
+}
+
+// Add account entry to the HTML list
+function addAccountEntry(message) {
+  var list = document.getElementById('content');
+  var entryContent = document.createTextNode(message + '\n');
+  list.appendChild(entryContent);
+}
+
+// Search for messages in your inbox
+function searchMessages(query, callback) {
   var getPageOfMessages = function(request, result) {
     request.execute(function(resp) {
       result = result.concat(resp.messages);
@@ -26,36 +44,35 @@ function listMessages(query, callback) {
   getPageOfMessages(initialRequest, []);
 }
 
-function retrieveContent(messages) {
+// Get message details
+function getMessages(messages) {
   messages.forEach(function(message) {
      var request = gapi.client.gmail.users.messages.get({
         'userId': 'me',
         'id': message.id,
-        // 'format': 'minimal'
       });
       request.execute(addToMessageArray);
   });
 }
 
-var messagesArray = [];
-
-function getSender(headerItem) { return headerItem.name === 'From';}
-function getSubject(headerItem) { return headerItem.name === 'Subject';}
 
 function addToMessageArray(message) {
-  var senderName = message.payload.headers.find(getSender).value;
-  var senderNameCopy = senderName;
-  var senderEmail = senderNameCopy.substring( senderNameCopy.indexOf( '<' ) + 1, senderNameCopy.indexOf( '>' ) );
-  senderName = senderName.replace('<' + senderEmail + '>', '');
-  senderName = senderName.replace('"', '').replace('"', '');
-  if(senderName == ""){ 
-    senderName = senderEmail 
+  var messageObject = {
+    'title': message.payload.headers.find(headerItem => headerItem.name === 'Subject').value,
+    'body': message.snippet,
+    'from': '',
+    'fromEmail': '',
+  }  
+
+  // Process sender details
+  var sender = message.payload.headers.find(headerItem => headerItem.name === 'From').value;
+  messageObject.fromEmail = sender.substring( sender.indexOf( '<' ) + 1, sender.indexOf( '>' ) );
+  messageObject.from = sender.replace('<' + messageObject.fromEmail + '>', '').replace('"', '').replace('"', '');
+  if(messageObject.from == ""){ 
+    messageObject.from = messageObject.fromEmail 
   }
 
-  var subject = message.payload.headers.find(getSubject).value;
-
-  appendPre(senderName);
-
-  messagesArray.push({'title': subject , 'body': message.snippet, 'senderName': senderName, 'senderEmail': senderEmail });
-  console.log(messagesArray);
+  // Add account to ownedAccounts
+  addAccountEntry(messageObject.from);
+  ownedAccounts.push(messageObject);
 }
