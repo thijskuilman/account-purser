@@ -14,6 +14,9 @@ var searchQueries = [
 	'"Welcome to"', 
 	'"Welkom bij"',
 
+	'"activate your account"',
 	'activeer uw account',
+
 	'"confirm your account"',
+	'"bevestig uw account"',
 ]
