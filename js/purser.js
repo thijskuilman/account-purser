@@ -82,20 +82,27 @@ function searchMessages(queries, callback) {
 // Get message details
 function getMessages(messages) {
   messages.forEach(function(message) {
-     var request = gapi.client.gmail.users.messages.get({
+    if(message !== undefined) {
+      var request = gapi.client.gmail.users.messages.get({
         'userId': 'me',
         'id': message.id,
       });
       request.execute(addMessage);
+    }
   });
 }
 
 // Add a formatted message to ownedAccounts
 function addMessage(message) {
+
+  try {
+    var deliveredTo = message.payload.headers.find(headerItem => headerItem.name === 'Delivered-To').value;
+  } catch (error) {}
+
   var messageObject = {
-    'title': message.payload.headers.find(headerItem => headerItem.name === 'Subject').value,
+    'title': message.payload.headers.find(headerItem => headerItem.name === 'Subject' || headerItem.name === 'subject').value,
     'body': message.snippet,
-    'to': message.payload.headers.find(headerItem => headerItem.name === 'Delivered-To').value,
+    'to': deliveredTo,
     'from': '',
     'fromEmail': '',
     'website': '',
@@ -103,7 +110,7 @@ function addMessage(message) {
   }  
 
   // Process sender details
-  var sender = message.payload.headers.find(headerItem => headerItem.name === 'From').value;
+  var sender = message.payload.headers.find(headerItem => headerItem.name === 'From' || headerItem.name == "from").value;
   messageObject.fromEmail = (sender.substring( sender.indexOf( '<' ) + 1, sender.indexOf( '>' ))).trim();
   messageObject.from = (sender.replace('<' + messageObject.fromEmail + '>', '').replace('"', '').replace('"', '')).trim();
   
