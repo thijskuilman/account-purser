@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Account Purser</title>
+    <meta charset='utf-8' />
+    <link rel="stylesheet" type="text/css" href="bootstrap/bootstrap.min.css">
+  </head>
+  <body>
+    
+
+    <div class="container">
+      <div class="row">
+        <div class="col-sm">
+          <div class="card text-white bg-primary mb-3 mt-3">
+            <div class="card-header">Account Purser</div>
+            <div class="card-body">
+              <h5 class="card-title">Google Auth</h5>
+              <p class="card-text">
+                Get a list of all the accounts you own. Check which accounts are stored in your password manager.
+
+                <button class="btn btn-light mt-3" id="authorize-button" style="display: none;">Authorize</button>
+                <button class="btn btn-light mt-3" id="signout-button" style="display: none;">Sign Out</button>
+              </p>
+            </div>
+          </div>
+          
+          <h2 class="mb-3">List of your accounts</h2>
+          <pre id="content"></pre>
+        </div>
+      </div>
+    </div>
+
+    
+    
+
+    <script type="text/javascript" src="bootstrap.min.js"></script>
+
+    <script type="text/javascript" src="purser.js"></script>
+    <script type="text/javascript" src="gmail-api.js"></script>
+
+    <script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()" onreadystatechange="if (this.readyState === 'complete') this.onload()">
+    </script>
+  </body>
+</html>
