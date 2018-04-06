@@ -94,40 +94,41 @@ function getMessages(messages) {
 
 // Add a formatted message to ownedAccounts
 function addMessage(message) {
-
-  try {
-    var deliveredTo = message.payload.headers.find(headerItem => headerItem.name === 'Delivered-To').value;
-  } catch (error) {}
-
+  
   var messageObject = {
     'title': message.payload.headers.find(headerItem => headerItem.name === 'Subject' || headerItem.name === 'subject').value,
     'body': message.snippet,
-    'to': deliveredTo,
+    'to': '',
     'from': '',
     'fromEmail': '',
     'website': '',
     'stored': false
-  }  
+  }
 
-  // Process sender details
+  // Get the retriever email address
+  try {
+    messageObject.to = message.payload.headers.find(headerItem => headerItem.name === 'Delivered-To').value;
+  } catch (error) {}
+
+
+  // Get the name and email of the sender
   var sender = message.payload.headers.find(headerItem => headerItem.name === 'From' || headerItem.name == "from").value;
   messageObject.fromEmail = (sender.substring( sender.indexOf( '<' ) + 1, sender.indexOf( '>' ))).trim();
   messageObject.from = (sender.replace('<' + messageObject.fromEmail + '>', '').replace('"', '').replace('"', '')).trim();
-  
-  var website = (messageObject.fromEmail).split('@')[1];
-  if(website) { 
-    messageObject.website = website; 
-  } else {
+
+  // Get the website of the sender, based on the email address or name
+  messageObject.website = (messageObject.fromEmail).split('@')[1];
+  if(!messageObject.website) { 
     messageObject.website = (messageObject.from).split('@')[1]; 
   }
   
+  // If the sender name is empty or an email: retrieve name based on email
   if(messageObject.from.indexOf('@') > -1 || messageObject.from == ""){ 
     websiteName = (messageObject.website).split('.')[0];
     messageObject.from = websiteName.charAt(0).toUpperCase() + websiteName.slice(1);
   }
 
   // Check if account is stored in password manager
-
   if(passwords.search(messageObject.website) > 0) { messageObject.stored = true };
   if(passwords.search(messageObject.from) > 0) { messageObject.stored = true };
 
