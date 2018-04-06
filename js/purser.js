@@ -83,9 +83,7 @@ function addMessage(message) {
   var sender = message.payload.headers.find(headerItem => headerItem.name === 'From').value;
   messageObject.fromEmail = (sender.substring( sender.indexOf( '<' ) + 1, sender.indexOf( '>' ))).trim();
   messageObject.from = (sender.replace('<' + messageObject.fromEmail + '>', '').replace('"', '').replace('"', '')).trim();
-  if(messageObject.from == ""){ 
-    messageObject.from = messageObject.fromEmail 
-  }
+  
   var website = (messageObject.fromEmail).split('@')[1];
   if(website) { 
     messageObject.website = website; 
@@ -93,7 +91,12 @@ function addMessage(message) {
     messageObject.website = (messageObject.from).split('@')[1]; 
   }
 
-  // Remove message if its a duplicate
+  if(messageObject.from.indexOf('@') > -1){ 
+    websiteName = (messageObject.website).split('.')[0];
+    messageObject.from = websiteName.charAt(0).toUpperCase() + websiteName.slice(1);
+  }
+
+  // Remove message if it's a duplicate
   var isDuplicate = ownedAccounts.find(item => item.from === messageObject.from);
   if(!isDuplicate) {
     addAccountEntry(messageObject);
