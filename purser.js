@@ -1,5 +1,6 @@
 var ownedAccounts = [];
-var list = document.getElementById('content');
+var list = document.getElementById('messageTable');
+var tableCount = 0;
 
 // Update UI after succesful sign in
 function updateSigninStatus(isSignedIn) {
@@ -15,7 +16,9 @@ function updateSigninStatus(isSignedIn) {
 
 // Add account entry to the HTML list
 function addAccountEntry(message) {
-  var messageEntry = document.createTextNode(message.from + '\n');
+  tableCount++;
+  var messageEntry = document.createElement('tr');
+  messageEntry.innerHTML = '<th scope="row">' + tableCount + '</th> <td>' + message.from + '</td> <td>' + message.to + '</td> <td><a target="_blank" href="http://' + message.website + '">' + message.website + '</a></td><td class="text-success table-success">Yes</td>';
   list.appendChild(messageEntry);
 }
 
@@ -60,8 +63,10 @@ function addMessage(message) {
   var messageObject = {
     'title': message.payload.headers.find(headerItem => headerItem.name === 'Subject').value,
     'body': message.snippet,
+    'to': message.payload.headers.find(headerItem => headerItem.name === 'Delivered-To').value,
     'from': '',
     'fromEmail': '',
+    'website': '',
   }  
 
   // Process sender details
@@ -71,6 +76,12 @@ function addMessage(message) {
   if(messageObject.from == ""){ 
     messageObject.from = messageObject.fromEmail 
   }
+  var website = (messageObject.fromEmail).split('@')[1];
+  if(website) { 
+    messageObject.website = website; 
+  } else {
+    messageObject.website = (messageObject.from).split('@')[1]; 
+  }
 
   // Remove message if its a duplicate
   var isDuplicate = ownedAccounts.find(item => item.from === messageObject.from);
@@ -78,5 +89,4 @@ function addMessage(message) {
     addAccountEntry(messageObject);
     ownedAccounts.push(messageObject);
   }
-  
 }

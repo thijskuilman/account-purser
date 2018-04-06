@@ -9,7 +9,7 @@
     <div class="container">
       <div class="row">
         <div class="col-sm">
-          <div class="card text-white bg-primary mb-3 mt-3">
+          <div class="card text-white bg-primary mb-4 mt-3">
             <div class="card-header">Account Purser</div>
             <div class="card-body">
               <h5 class="card-title">Google Auth</h5>
@@ -22,8 +22,22 @@
             </div>
           </div>
           
-          <h2 class="mb-3">List of your accounts</h2>
+          <h2 class="mb-3 mt-4">List of your accounts</h2>
           <pre id="content"></pre>
+
+          <table class="table">
+            <thead>
+              <tr>
+                <th scope="col">#</th>
+                <th scope="col">Title</th>
+                <th scope="col">Account</th>
+                <th scope="col">Website</th>
+                <th scope="col">Secured</th>
+              </tr>
+            </thead>
+            <tbody id="messageTable">
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
