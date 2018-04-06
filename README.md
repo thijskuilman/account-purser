@@ -1,3 +1,5 @@
+![](https://user-images.githubusercontent.com/3017676/38424019-ffb04316-39af-11e8-9a67-655746a3be9c.png)
+
 #  Account Purser
 Retrieve a list of all accounts you own. Check if your accounts are stored in a password manager.
 
