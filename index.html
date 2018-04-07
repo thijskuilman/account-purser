@@ -6,6 +6,7 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
+    <link rel="stylesheet" type="text/css" href="/css/tablesort.css"
   </head>
   <body>
     <div class="container">
@@ -37,10 +38,10 @@
           <h2 class="mb-3 mt-4">List of your accounts (<span id="accountCount">0</span>)</h2>
           <pre id="content"></pre>
 
-          <table class="table table-hover">
+          <table id="accountsTable" class="table table-hover">
             <thead>
               <tr>
-                <th scope="col">#</th>
+                <th scope="col" data-sort-method='none'>#</th>
                 <th scope="col">Title</th>
                 <th scope="col">Account</th>
                 <th scope="col">Website</th>
@@ -56,6 +57,7 @@
 
     <script type="text/javascript" src="/filedrag.js"></script>
     <script type="text/javascript" src="/search_queries.js"></script>
+    <script type="text/javascript" src="/js/tablesort.js"></script>
     <script type="text/javascript" src="/js/purser.js"></script>
     <script type="text/javascript" src="/js/gmail-api.js"></script>
 
@@ -63,6 +65,7 @@
     </script>
 
     <script type="text/javascript">
+      new Tablesort(document.getElementById('accountsTable'));
     </script>
   </body>
 </html>
