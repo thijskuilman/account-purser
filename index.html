@@ -6,7 +6,8 @@
     <link rel="shortcut icon" href="/favicon.ico" type="image/x-icon">
     <link rel="icon" href="/favicon.ico" type="image/x-icon">
     <link rel="stylesheet" type="text/css" href="/css/bootstrap.min.css">
-    <link rel="stylesheet" type="text/css" href="/css/tablesort.css"
+    <link rel="stylesheet" type="text/css" href="/css/tablesort.css">
+    <link rel="stylesheet" type="text/css" href="/css/animation.css">
   </head>
   <body>
     <div class="container">
@@ -25,32 +26,42 @@
             </div>
           </div>
 
-          <div class="card bg-light mb-4 mt-3" id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);">
-            <div class="card-header">Account Purser</div>
-            <div class="card-body">
-              <h5 class="card-title text-center">
-                <img id="dropzone_icon" src="/img/drop_file.svg" width="96px">
-                <span id="dropzone_text">Drag an export (JSON, txt, CSV..) of a password manager here</span>
-              </h5>
+          <div id="app" style="display: none">
+            <div class="card bg-light mb-4 mt-3" id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);" style="display: none">
+              <div class="card-header">Account Purser</div>
+              <div class="card-body">
+                <h5 class="card-title text-center">
+                  <img id="dropzone_icon" src="/img/drop_file.svg" width="96px">
+                  <span id="dropzone_text">Drag an export (JSON, txt, CSV..) of a password manager here</span>
+                </h5>
+              </div>
+            </div>
+                      
+            <h2 class="mb-3 mt-4">List of your accounts (<span id="accountCount">0</span>)</h2>
+            
+            <table id="accountsTable" class="table table-hover">
+              <thead>
+                <tr>
+                  <th scope="col" data-sort-method='none'>#</th>
+                  <th scope="col">Title</th>
+                  <th scope="col">Account</th>
+                  <th scope="col">Website</th>
+                  <th scope="col">Stored in Password Manager</th>
+                </tr>
+              </thead>
+              <tbody id="messageTable">
+              </tbody>
+            </table>
+
+            <div id="loadingAnimation">
+              <div class="spinner mt-5">
+                <div class="double-bounce1"></div>
+                <div class="double-bounce2"></div>
+              </div>
+
+              <p id="loadingText" class="h5 text-primary text-center mb-5">Finding accounts..</p>
             </div>
           </div>
-                    
-          <h2 class="mb-3 mt-4">List of your accounts (<span id="accountCount">0</span>)</h2>
-          <pre id="content"></pre>
-
-          <table id="accountsTable" class="table table-hover">
-            <thead>
-              <tr>
-                <th scope="col" data-sort-method='none'>#</th>
-                <th scope="col">Title</th>
-                <th scope="col">Account</th>
-                <th scope="col">Website</th>
-                <th scope="col">Stored in Password Manager</th>
-              </tr>
-            </thead>
-            <tbody id="messageTable">
-            </tbody>
-          </table>
         </div>
       </div>
     </div>

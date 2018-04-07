@@ -3,6 +3,10 @@ var list = document.getElementById('messageTable');
 var accountCount = document.getElementById("accountCount");
 var processedMessages = 0;
 var resultMessages = [];
+var loadingText = document.getElementById('loadingText');
+var loadingAnimation = document.getElementById('loadingAnimation');
+var app = document.getElementById('app');
+var dropzone = document.getElementById('drop_zone');
 
 // Reset list and perform searches again.
 function refreshList() {
@@ -16,11 +20,14 @@ function updateSigninStatus(isSignedIn) {
   if (isSignedIn) {
     authorizeButton.style.display = 'none';
     signoutButton.style.display = 'block';
+    loadingAnimation.style.display = 'block';
+    app.style.display = 'block';
 
     searchMessages(searchQueries, getMessages);
   } else {
     authorizeButton.style.display = 'block';
     signoutButton.style.display = 'none';
+    app.style.display = 'none';
   }
 }
 
@@ -42,7 +49,6 @@ function searchMessages(queries, callback) {
           getPageOfMessages(request, result);
         } else {
           processedQueries++;
-          console.log(result.length + " results for " + query);
           resultMessages = resultMessages.concat(result);
           if(processedQueries == queries.length) {
             getMessages(resultMessages);
@@ -62,7 +68,7 @@ var rawMessages = [];
 
 // Get message details
 function getMessages(messages) {
-  console.log("Got messages. Get Details")
+  loadingText.innerText = "Getting account details..";
   var processedRequests = 0;
 
   messages.forEach(function(message) {
@@ -92,7 +98,7 @@ function getMessages(messages) {
 }
 
 function formatMessagesQueue() {
-  console.log("Start formatting");
+  loadingText.innerText = "Formatting account data..";
   let messageQueue = rawMessages.reduce((promiseChain, message) => {
     return promiseChain.then(() => new Promise((resolve) => {
       formatMessage(message, resolve);
@@ -158,7 +164,8 @@ function showMessage(element) {
 }
 
 function generateTable() {
-
+  loadingAnimation.style.display = 'none';
+  dropzone.style.display = 'block';
   accountCount.innerText = ownedAccounts.length;
 
   // Add account rows
