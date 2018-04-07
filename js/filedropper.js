@@ -22,7 +22,7 @@ function processExport(file) {
   var fileObject = file,read = new FileReader();
   read.readAsBinaryString(fileObject);
   read.onloadend = function(){
-      passwords = read.result;
+      passwords = (read.result).toLowerCase();
       refreshList();
   }
 }

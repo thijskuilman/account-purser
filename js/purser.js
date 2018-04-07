@@ -157,8 +157,15 @@ function formatMessage(message, callback) {
   }
 
   // Check if account is stored in password manager
-  if(passwords.search(messageObject.website) > 0) { messageObject.stored = true };
-  if(passwords.search(messageObject.from) > 0) { messageObject.stored = true };
+  if(passwords) {
+    if(messageObject.website) {
+      if(passwords.search((messageObject.website).toLowerCase()) > 0) { messageObject.stored = true };
+    }
+    
+    if(messageObject.from) {
+      if(passwords.search((messageObject.from).toLowerCase()) > 0) { messageObject.stored = true };
+    }
+  }
 
   // Remove message if it's a duplicate
   if(!ownedAccounts.find(item => item.from === messageObject.from)) {
