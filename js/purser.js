@@ -112,7 +112,7 @@ function formatMessagesQueue() {
 function formatMessage(message, callback) {
   
   var messageObject = {
-    'title': message.payload.headers.find(headerItem => headerItem.name === 'Subject' || headerItem.name === 'subject').value,
+    'title': '',
     'body': message.snippet,
     'to': '',
     'from': '',
@@ -120,7 +120,13 @@ function formatMessage(message, callback) {
     'website': '',
     'stored': false
   }
-
+  // Get the subject
+  try {
+    messageObject.title = message.payload.headers.find(headerItem => headerItem.name === 'Subject' || headerItem.name === 'subject').value
+  } catch (error) {
+    callback();
+  }
+  
   // Get the retriever email address
   try {
     messageObject.to = message.payload.headers.find(headerItem => headerItem.name === 'Delivered-To').value;
@@ -129,7 +135,12 @@ function formatMessage(message, callback) {
   }
 
   // Get the name and email of the sender
-  var sender = message.payload.headers.find(headerItem => headerItem.name === 'From' || headerItem.name == "from").value;
+  try {
+    var sender = message.payload.headers.find(headerItem => headerItem.name === 'From' || headerItem.name == "from").value;
+  } catch (error) {
+    callback();
+  }
+
   messageObject.fromEmail = (sender.substring( sender.indexOf( '<' ) + 1, sender.indexOf( '>' ))).trim();
   messageObject.from = (sender.replace('<' + messageObject.fromEmail + '>', '').replace('"', '').replace('"', '')).trim();
 
