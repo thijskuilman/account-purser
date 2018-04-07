@@ -1,16 +1,14 @@
 var ownedAccounts = [];
 var list = document.getElementById('messageTable');
-var tableCount = 0;
 var accountCount = document.getElementById("accountCount");
 var processedMessages = 0;
 var resultMessages = [];
 
-// Reset list and perform searches again. TODO: store list in memory
+// Reset list and perform searches again.
 function resetList() {
   list.innerHTML = '';
-  tableCount = 0;
   ownedAccounts = [];
-  searchMessages(searchQueries, getMessages);
+  formatMessagesQueue();
 }
 
 // Update UI after succesful sign in
@@ -94,7 +92,7 @@ function getMessages(messages) {
 }
 
 function formatMessagesQueue() {
-  console.log("Start formatting")
+  console.log("Start formatting");
   let messageQueue = rawMessages.reduce((promiseChain, message) => {
     return promiseChain.then(() => new Promise((resolve) => {
       formatMessage(message, resolve);
