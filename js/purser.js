@@ -26,7 +26,6 @@ function updateSigninStatus(isSignedIn) {
   }
 }
 
-
 // Search for messages in your inbox
 function searchMessages(queries, callback) {
   var processedQueries = 0;
@@ -61,33 +60,53 @@ function searchMessages(queries, callback) {
   });
 }
 
+var rawMessages = [];
+
 // Get message details
 function getMessages(messages) {
+  console.log("Got messages. Get Details")
+  var processedRequests = 0;
 
-  console.log("ok totaal +" + messages.length)
   messages.forEach(function(message) {
-    if(message !== undefined) {
-      var request = gapi.client.gmail.users.messages.get({
-        'userId': 'me',
-        'id': message.id,
-      });
-      request.execute(addMessage);
+    if(message === undefined) {
+      processedRequests++;
+      if(processedRequests >= resultMessages.length) {
+        formatMessagesQueue();
+      }
+      return;
     }
 
-    // Generate table when all messages have been processed
-    console.log(processedMessages + "/" + (resultMessages.length))
-    processedMessages++;
-    if(processedMessages >= (resultMessages.length)) {
-      setTimeout(function (){
-        generateTable();
-      }, 6000);
-    }
+    var request = gapi.client.gmail.users.messages.get({
+      'userId': 'me',
+      'id': message.id,
+    });
+
+    request.execute(function(message) {
+      rawMessages.push(message);
+
+      processedRequests++;
+      if(processedRequests >= resultMessages.length) {
+        formatMessagesQueue();
+      }
+    });
+
   });
 }
 
-// Add a formatted message to ownedAccounts
-function addMessage(message) {
+function formatMessagesQueue() {
+  console.log("Start formatting")
+  let messageQueue = rawMessages.reduce((promiseChain, message) => {
+    return promiseChain.then(() => new Promise((resolve) => {
+      formatMessage(message, resolve);
+    }));
+  }, Promise.resolve());
 
+  messageQueue.then(() => generateTable())
+}
+
+// Add a formatted message to ownedAccounts
+function formatMessage(message, callback) {
+  
   var messageObject = {
     'title': message.payload.headers.find(headerItem => headerItem.name === 'Subject' || headerItem.name === 'subject').value,
     'body': message.snippet,
@@ -101,7 +120,9 @@ function addMessage(message) {
   // Get the retriever email address
   try {
     messageObject.to = message.payload.headers.find(headerItem => headerItem.name === 'Delivered-To').value;
-  } catch (error) {}
+  } catch (error) {
+    callback();
+  }
 
   // Get the name and email of the sender
   var sender = message.payload.headers.find(headerItem => headerItem.name === 'From' || headerItem.name == "from").value;
@@ -128,6 +149,8 @@ function addMessage(message) {
   if(!ownedAccounts.find(item => item.from === messageObject.from)) {
     ownedAccounts.push(messageObject);
   }
+
+  callback();
 }
 
 // Show message on click
