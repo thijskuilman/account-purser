@@ -42,11 +42,14 @@ function addAccountEntry(message) {
 
   tableCount++;
   var messageEntry = document.createElement('tr');
-  messageEntry.innerHTML =  '<th scope="row">' + tableCount + '</th>' + 
-                            '<td><a href="#" class="mr-2"><img style="opacity: 0.2" src="/img/mail.svg" height="18px" data-title="' + message.title + '" data-body="' + message.body + '" onclick="showMessage(this)"></a> ' + message.from + '</td>' + 
-                            '<td>' + message.to + '</td>' + 
-                            '<td><a target="_blank" href="http://' + message.website + '">' + message.website + '</a></td>' +
-                            '<td class="text-' + tableClass +'  table-' + tableClass + '">' + storedString + '</td>';
+  messageEntry.innerHTML =  
+    '<th scope="row">' + tableCount + '</th>' + 
+    '<td> <a href="#" class="mr-2">' +
+            '<img style="opacity: 0.2; height: 18px" src="/img/mail.svg" data-title="' + message.title + '" data-body="' + message.body + '" onclick="showMessage(this)">' +
+          '</a> ' + message.from + '</td>' + 
+    '<td>' + message.to + '</td>' + 
+    '<td><a target="_blank" href="http://' + message.website + '">' + message.website + '</a></td>' +
+    '<td class="text-' + tableClass +'  table-' + tableClass + '">' + storedString + '</td>';
   list.appendChild(messageEntry);
   accountCount.innerText = tableCount;
 }
