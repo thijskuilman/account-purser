@@ -1,14 +1,14 @@
 var ownedAccounts = [];
 var list = document.getElementById('messageTable');
-var tableCount = 0;
 var accountCount = document.getElementById("accountCount");
+var processedMessages = 0;
+var resultMessages = [];
 
-// Reset list and perform searches again. TODO: store list in memory
-function resetList() {
+// Reset list and perform searches again.
+function refreshList() {
   list.innerHTML = '';
-  tableCount = 0;
   ownedAccounts = [];
-  searchMessages(searchQueries, getMessages);
+  formatMessagesQueue();
 }
 
 // Update UI after succesful sign in
@@ -24,38 +24,10 @@ function updateSigninStatus(isSignedIn) {
   }
 }
 
-// Add account entry to the HTML list
-function addAccountEntry(message) {
-
-  var tableClass = "none";
-  var storedString = "No file dropped.";
-
-  if(passwords != "") {
-    if(message.stored) {
-      tableClass = "success";
-      storedString = "Yes";
-    } else {
-      tableClass = "danger";
-      storedString = "No";
-    }
-  }
-
-  tableCount++;
-  var messageEntry = document.createElement('tr');
-  messageEntry.innerHTML =  
-    '<th scope="row">' + tableCount + '</th>' + 
-    '<td> <a href="#" class="mr-2">' +
-            '<img style="opacity: 0.2; height: 18px" src="/img/mail.svg" data-title="' + message.title + '" data-body="' + message.body + '" onclick="showMessage(this)">' +
-          '</a> ' + message.from + '</td>' + 
-    '<td>' + message.to + '</td>' + 
-    '<td><a target="_blank" href="http://' + message.website + '">' + message.website + '</a></td>' +
-    '<td class="text-' + tableClass +'  table-' + tableClass + '">' + storedString + '</td>';
-  list.appendChild(messageEntry);
-  accountCount.innerText = tableCount;
-}
-
 // Search for messages in your inbox
 function searchMessages(queries, callback) {
+  var processedQueries = 0;
+
   queries.forEach(function(query) {
     var getPageOfMessages = function(request, result) {
       request.execute(function(resp) {
@@ -69,8 +41,12 @@ function searchMessages(queries, callback) {
           });
           getPageOfMessages(request, result);
         } else {
-          console.log(result.length + " results for " + query)
-          callback(result);
+          processedQueries++;
+          console.log(result.length + " results for " + query);
+          resultMessages = resultMessages.concat(result);
+          if(processedQueries == queries.length) {
+            getMessages(resultMessages);
+          }
         }
       });
     };
@@ -82,22 +58,53 @@ function searchMessages(queries, callback) {
   });
 }
 
+var rawMessages = [];
+
 // Get message details
 function getMessages(messages) {
+  console.log("Got messages. Get Details")
+  var processedRequests = 0;
+
   messages.forEach(function(message) {
-    if(message !== undefined) {
-      var request = gapi.client.gmail.users.messages.get({
-        'userId': 'me',
-        'id': message.id,
-      });
-      request.execute(addMessage);
+    if(message === undefined) {
+      processedRequests++;
+      if(processedRequests >= resultMessages.length) {
+        formatMessagesQueue();
+      }
+      return;
     }
+
+    var request = gapi.client.gmail.users.messages.get({
+      'userId': 'me',
+      'id': message.id,
+    });
+
+    request.execute(function(message) {
+      rawMessages.push(message);
+
+      processedRequests++;
+      if(processedRequests >= resultMessages.length) {
+        formatMessagesQueue();
+      }
+    });
+
   });
 }
 
-// Add a formatted message to ownedAccounts
-function addMessage(message) {
+function formatMessagesQueue() {
+  console.log("Start formatting");
+  let messageQueue = rawMessages.reduce((promiseChain, message) => {
+    return promiseChain.then(() => new Promise((resolve) => {
+      formatMessage(message, resolve);
+    }));
+  }, Promise.resolve());
 
+  messageQueue.then(() => generateTable())
+}
+
+// Add a formatted message to ownedAccounts
+function formatMessage(message, callback) {
+  
   var messageObject = {
     'title': message.payload.headers.find(headerItem => headerItem.name === 'Subject' || headerItem.name === 'subject').value,
     'body': message.snippet,
@@ -111,7 +118,9 @@ function addMessage(message) {
   // Get the retriever email address
   try {
     messageObject.to = message.payload.headers.find(headerItem => headerItem.name === 'Delivered-To').value;
-  } catch (error) {}
+  } catch (error) {
+    callback();
+  }
 
   // Get the name and email of the sender
   var sender = message.payload.headers.find(headerItem => headerItem.name === 'From' || headerItem.name == "from").value;
@@ -135,15 +144,50 @@ function addMessage(message) {
   if(passwords.search(messageObject.from) > 0) { messageObject.stored = true };
 
   // Remove message if it's a duplicate
-  var isDuplicate = ownedAccounts.find(item => item.from === messageObject.from);
-  if(!isDuplicate) {
-    addAccountEntry(messageObject);
+  if(!ownedAccounts.find(item => item.from === messageObject.from)) {
     ownedAccounts.push(messageObject);
   }
+
+  callback();
 }
 
 // Show message on click
 function showMessage(element) {
   event.preventDefault();
   alert(element.dataset.title + ': ' + element.dataset.body + '..');
+}
+
+function generateTable() {
+
+  accountCount.innerText = ownedAccounts.length;
+
+  // Add account rows
+  ownedAccounts.forEach(function(account, index) {
+
+    var tableClass = "none";
+    var storedString = "No file dropped.";
+
+    if(passwords != "") {
+      if(account.stored) {
+        tableClass = "success";
+        storedString = "Yes";
+      } else {
+        tableClass = "danger";
+        storedString = "No";
+      }
+    }
+
+    // Add row HTML to table
+    var accountRow = document.createElement('tr');
+    accountRow.innerHTML =  
+      '<th scope="row">' + index + '</th>' + 
+      '<td> <a href="#" class="mr-2">' +
+              '<img style="opacity: 0.2; height: 18px" src="/img/mail.svg" data-title="' + account.title + '" data-body="' + account.body + '" onclick="showMessage(this)">' +
+            '</a> ' + account.from + '</td>' + 
+      '<td>' + account.to + '</td>' + 
+      '<td><a target="_blank" href="http://' + account.website + '">' + account.website + '</a></td>' +
+      '<td class="text-' + tableClass +'  table-' + tableClass + '">' + storedString + '</td>';
+
+    list.appendChild(accountRow);
+  });
 }

@@ -23,7 +23,7 @@ function processExport(file) {
   read.readAsBinaryString(fileObject);
   read.onloadend = function(){
       passwords = read.result;
-      resetList();
+      refreshList();
   }
 }
 
