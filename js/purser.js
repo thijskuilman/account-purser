@@ -5,7 +5,7 @@ var processedMessages = 0;
 var resultMessages = [];
 
 // Reset list and perform searches again.
-function resetList() {
+function refreshList() {
   list.innerHTML = '';
   ownedAccounts = [];
   formatMessagesQueue();
