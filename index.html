@@ -16,7 +16,7 @@
           <div class="card text-white bg-primary mb-4 mt-3">
             <div class="card-header">Account Purser</div>
             <div class="card-body">
-              <h5 class="card-title">Google Auth</h5>
+              <h5 class="card-title">Sign in with your Google account</h5>
               <p class="card-text">
                 Get a list of all the accounts you own. Check which accounts are stored in your password manager.
 
@@ -38,6 +38,10 @@
             </div>
                       
             <h2 class="mb-3 mt-4">List of your accounts (<span id="accountCount">0</span>)</h2>
+
+            <div class="progress mt-4 mb-4 bg-danger" id="progressBar" style="display: none">
+              <div class="progress-bar bg-success" id="progressBarStored" role="progressbar" style="width: 25%;" aria-valuemin="0" aria-valuemax="100">25% stored</div>
+            </div>
             
             <table id="accountsTable" class="table table-hover">
               <thead>

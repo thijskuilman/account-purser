@@ -197,4 +197,25 @@ function generateTable() {
 
     list.appendChild(accountRow);
   });
+
+  if(passwords) {
+    updateProgressBar(ownedAccounts);
+  }
+  
+}
+
+// Show percentage of stored accounts
+function updateProgressBar(accounts) {
+  var progressBar = document.getElementById('progressBarStored');
+  document.getElementById('progressBar').style.display = "block";
+  var percentageStored = (accounts.filter(item => item.stored)).length;
+
+  if(!percentageStored) {
+    percentageStored = 0;
+  } else {
+    percentageStored = ((percentageStored / accounts.length) * 100).toFixed(2);
+  }
+  
+  progressBar.style.width = percentageStored + "%";
+  progressBar.innerHTML = percentageStored + "% stored";
 }
