@@ -94,7 +94,7 @@ function getMessages(messages) {
 
 // Add a formatted message to ownedAccounts
 function addMessage(message) {
-  
+
   var messageObject = {
     'title': message.payload.headers.find(headerItem => headerItem.name === 'Subject' || headerItem.name === 'subject').value,
     'body': message.snippet,
@@ -109,7 +109,6 @@ function addMessage(message) {
   try {
     messageObject.to = message.payload.headers.find(headerItem => headerItem.name === 'Delivered-To').value;
   } catch (error) {}
-
 
   // Get the name and email of the sender
   var sender = message.payload.headers.find(headerItem => headerItem.name === 'From' || headerItem.name == "from").value;

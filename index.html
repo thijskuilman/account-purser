@@ -25,12 +25,12 @@
             </div>
           </div>
 
-          <div class="card bg-light mb-4 mt-3" id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);">
+          <div class="card bg-light mb-4 mt-3" id="drop_zone" ondrop="dropHandler(event);" ondragover="dragOverHandler(event);" ondragleave="dragLeaveHandler(event);">
             <div class="card-header">Account Purser</div>
             <div class="card-body">
               <h5 class="card-title text-center">
-                <img src="/img/drop_file.svg" width="96px">
-                Drag an export (JSON, txt, CSV..) of a password manager here
+                <img id="dropzone_icon" src="/img/drop_file.svg" width="96px">
+                <span id="dropzone_text">Drag an export (JSON, txt, CSV..) of a password manager here</span>
               </h5>
             </div>
           </div>
@@ -55,7 +55,7 @@
       </div>
     </div>
 
-    <script type="text/javascript" src="/filedrag.js"></script>
+    <script type="text/javascript" src="/js/filedropper.js"></script>
     <script type="text/javascript" src="/search_queries.js"></script>
     <script type="text/javascript" src="/js/tablesort.js"></script>
     <script type="text/javascript" src="/js/purser.js"></script>
