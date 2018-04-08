@@ -50,6 +50,7 @@ function searchMessages(queries, callback) {
         } else {  
           processedQueries++;
           loadingText.innerText = "Find accounts.. " + Math.round((processedQueries / queries.length) * 100) + "%";
+          result.forEach(function(resultObject) { resultObject.search_query = query; });
           resultMessages = resultMessages.concat(result);
           if(processedQueries == queries.length) {
             getMessages(resultMessages);
@@ -73,6 +74,7 @@ function getMessages(messages) {
   var processedRequests = 0;
 
   messages.forEach(function(message) {
+
     if(message === undefined) {
       processedRequests++;
       if(processedRequests >= resultMessages.length) {
@@ -86,10 +88,13 @@ function getMessages(messages) {
       'id': message.id,
     });
 
-    request.execute(function(message) {
-      rawMessages.push(message);
+    request.execute(function(messageDetails) {
+      messageDetails.search_query = message.search_query;
+      rawMessages.push(messageDetails);
 
       processedRequests++;
+
+      loadingText.innerText = "Getting account details.. " + Math.round((processedRequests / messages.length) * 100) + "%";
       if(processedRequests >= resultMessages.length) {
         formatMessagesQueue();
       }
@@ -119,7 +124,8 @@ function formatMessage(message, callback) {
     'from': '',
     'fromEmail': '',
     'website': '',
-    'stored': false
+    'stored': false,
+    'search_query': message.search_query,
   }
   // Get the subject
   try {
@@ -214,6 +220,7 @@ function generateTable() {
       '<td>' + account.to + '</td>' + 
       '<td><a target="_blank" href="http://' + account.website + '">' + account.website + '</a></td>' +
       '<td class="text-' + tableClass +'  table-' + tableClass + '">' + storedString + '</td>';
+      // '<strong>' + account.search_query + "</strong>: " + account.title + '" | | "' + account.body;
 
     list.appendChild(accountRow);
   });
