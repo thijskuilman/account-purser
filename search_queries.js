@@ -2,16 +2,12 @@
 // Make sure to add quotes to increase the search precision
 
 var searchQueries = [
-	'"confirm your email"',
-	'"bevestiging e-mailadres"',
-	'"Verify" "email"',
-
-	'"Thank you for registering"',
-	'"Bedankt voor uw aanmelding"',
-	'"dank" "registratie"',
-
-	'"Your new account"',
-	'"nieuw account"',
+	
+	// Welcome messages
+	'"welcome" "validate"',
+	'"Welcome to" "confirm"',
+	'"Welcome to" "confirmed"',
+	'"welcome you to"',
 
 	'""Welcome to" "signing""',
 	'"Welkom bij"',
@@ -20,24 +16,47 @@ var searchQueries = [
 	'"Welkom" "account"',
 
 	'"Welcome to" "Nice to meet you"',
+	
+	// Thank you 
+	'"Thank you for registering"',
+	'"Bedankt voor uw aanmelding"',
+
+	'"Thanks" "registering"',
+	'"dank" "registratie"',
+
+	// Account verification
+	'"Account" "Verification"',
+	'"Verify" "email"',
+
+	// Confirm account / registration
+	'"confirm your account"',
+	'"bevestig" "account"',
+	'"account bevestigen"',
+
+	'"Confirm" "registration"',
+	'"Bevestigen" "registratie"',
+	'"bevestig" "inschrijving"',
+	'"Bevestiging" "inschrijving"',
+
+	'"confirm your email"',
+	'"bevestiging e-mailadres"',
+
+	// Activate account
+	'"account" "activated"',
+	'"account" "activeren"',
+
+	'"thanks" "activate"',
+	'"bedankt" "activeren"',
 
 	'"activate" "account"',
 	'"Activeer" "account"',
 
-	'"confirm your account"',
-	'"bevestig" "account"',
-	'"bevestig" "aanmelding"',
-	'"account bevestigen"',
-	'"Confirm" "registration"',
-	'"Account" "Verification"',
-	'"account" "activated"',
-	'"welcome" "validate"',
-	'"account" "activeren"',
-	'"bedankt" "activeren"',
+	// Reset password
 	'"wachtwoord" "resetten"',
-	'"Welcome to" "confirm"',
-	'"Welcome to" "confirmed"',
-	'"welcome you to"',
+	'"reset" "your" "password"',
+
+	// Misc.
 	'"inlogcode"',
-	'"Bevestiging" "inschrijving"',
+	'"Your new account"',
+	'"nieuw account"',
 ]
