@@ -47,8 +47,9 @@ function searchMessages(queries, callback) {
             'q': query
           });
           getPageOfMessages(request, result);
-        } else {
+        } else {  
           processedQueries++;
+          loadingText.innerText = "Find accounts.. " + Math.round((processedQueries / queries.length) * 100) + "%";
           resultMessages = resultMessages.concat(result);
           if(processedQueries == queries.length) {
             getMessages(resultMessages);
@@ -168,6 +169,7 @@ function formatMessage(message, callback) {
   }
 
   // Remove message if it's a duplicate
+  // !ownedAccounts.find(item => item.website === messageObject.website)
   if(!ownedAccounts.find(item => item.from === messageObject.from)) {
     ownedAccounts.push(messageObject);
   }
