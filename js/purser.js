@@ -163,6 +163,11 @@ function formatMessage(message, callback) {
     messageObject.from = websiteName.charAt(0).toUpperCase() + websiteName.slice(1);
   }
 
+  // Set website to empty string if undefined
+  if (!messageObject.website) {
+    messageObject.website = '';
+  }
+
   // Check if account is stored in password manager
   if(passwords) {
     if(messageObject.website) {
@@ -174,13 +179,25 @@ function formatMessage(message, callback) {
     }
   }
 
-  // Remove message if it's a duplicate
-  // !ownedAccounts.find(item => item.website === messageObject.website)
-  if(!ownedAccounts.find(item => item.from === messageObject.from)) {
+  // Remove message if it's a duplicate 
+  var isDuplicate = false;
+  duplicateCheck = ['from', 'website', 'title']
+
+  duplicateCheck.forEach(function(key) {
+    if(ownedAccounts.find(item => (item[key]).toLowerCase() === (messageObject[key]).toLowerCase())) {
+      isDuplicate = true;
+    }
+  });
+
+  if(!isDuplicate) {
     ownedAccounts.push(messageObject);
   }
 
   callback();
+}
+
+function checkDuplicate() {
+
 }
 
 // Show message on click
@@ -219,7 +236,8 @@ function generateTable() {
             '</a> ' + account.from + '</td>' + 
       '<td>' + account.to + '</td>' + 
       '<td><a target="_blank" href="http://' + account.website + '">' + account.website + '</a></td>' +
-      '<td class="text-' + tableClass +'  table-' + tableClass + '">' + storedString + '</td>';
+      '<td class="text-' + tableClass +'  table-' + tableClass + '">' + storedString + '</td>'
+      // + '<td>' + account.body + '</td>';
       // '<strong>' + account.search_query + "</strong>: " + account.title + '" | | "' + account.body;
 
     list.appendChild(accountRow);

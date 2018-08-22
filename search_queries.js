@@ -2,61 +2,35 @@
 // Make sure to add quotes to increase the search precision
 
 var searchQueries = [
+
+	// GDPR
+	"gdpr",
+	'"privacy" {"updated" "updating" "geüpdatet"}',
+	'{"privacywet" "privacy wetgeving"}',
+
+	// Thanks
+	'"you for" {"registering" "signing up"}',
+	'{"for registering" "for signing up" }',
 	
-	// Welcome messages
-	'"welcome" "validate"',
-	'"Welcome to" "confirm"',
-	'"Welcome to" "confirmed"',
-	'"welcome you to"',
+	'{"Bedankt voor" "Dank voor"} {"aanmelding" "registreren" "inschrijving"}',
 
-	'""Welcome to" "signing""',
-	'"Welkom bij"',
+	// Confirm
+	'"Complete your " {"login" "account" "registration" "profile"}',
+	'"Confirm your " {"login" "account" "registration" "profile" "email" "subscription" "details"}',
+	'{"Verify" "verification" "activate"} {"login" "account" "registration" "email"}',
+	'"Confirmation" "registration"',
+	'{"Bevestig" "activeer" "activeren" "bevestigen" "bevestiging" "voltooien"} {"email" "account" "registratie" "profiel" "inschrijving"}',
 
-	'"Welcome to" "account"',
-	'"Welkom" "account"',
-
-	'"Welcome to" "Nice to meet you"',
-	
-	// Thank you 
-	'"Thank you for registering"',
-	'"Bedankt voor uw aanmelding"',
-
-	'"Thanks" "registering"',
-	'"dank" "registratie"',
-
-	// Account verification
-	'"Account" "Verification"',
-	'"Verify" "email"',
-
-	// Confirm account / registration
-	'"confirm your account"',
-	'"bevestig" "account"',
-	'"account bevestigen"',
-
-	'"Confirm" "registration"',
-	'"Bevestigen" "registratie"',
-	'"bevestig" "inschrijving"',
-	'"Bevestiging" "inschrijving"',
-
-	'"confirm your email"',
-	'"bevestiging e-mailadres"',
-
-	// Activate account
-	'"account" "activated"',
-	'"account" "activeren"',
-
-	'"thanks" "activate"',
-	'"bedankt" "activeren"',
-
-	'"activate" "account"',
-	'"Activeer" "account"',
-
-	// Reset password
-	'"wachtwoord" "resetten"',
-	'"reset" "your" "password"',
-
-	// Misc.
-	'"inlogcode"',
+	// New account
 	'"Your new account"',
 	'"nieuw account"',
+
+	// Welcome
+	"Welcome to",
+	"Welkom",
+
+	// Passwords
+	'"reset" "password"',
+	'"wachtwoord" "reset"',
+	'{"inlogcode" "logincode"}',
 ]
