@@ -14,7 +14,6 @@ function toggleAccountListing(accountId) {
 	if(table == 'listed-account-table-body') {
 		unlistAccount(accountId);
 		unlistedAccounts.push(accountId);
-		localStorage.setItem("unlistedAccounts", JSON.stringify(unlistedAccounts));
 	}
 
 	if(table == 'unlisted-account-table-body') {
@@ -23,8 +22,10 @@ function toggleAccountListing(accountId) {
 		if (index !== -1) {
 		    unlistedAccounts.splice(index, 1);
 		}
-		localStorage.setItem("unlistedAccounts", JSON.stringify(unlistedAccounts));
 	}
+	
+	localStorage.setItem("unlistedAccounts", JSON.stringify(unlistedAccounts));
+	updateProgressBar(ownedAccounts)
 }
 
 function unlistAccount(accountId) {

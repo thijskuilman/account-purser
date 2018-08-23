@@ -354,6 +354,8 @@ function getNonStoredPasswords() {
 
 // Show percentage of stored accounts
 function updateProgressBar(accounts) {
+  let unlistedAccounts = JSON.parse(localStorage.getItem("unlistedAccounts"));
+
   var progressBar = document.getElementById('progressBarStored');
   document.getElementById('progressBar').style.display = "block";
   var percentageStored = (accounts.filter(item => item.stored)).length;
@@ -361,7 +363,7 @@ function updateProgressBar(accounts) {
   if(!percentageStored) {
     percentageStored = 0;
   } else {
-    percentageStored = ((percentageStored / accounts.length) * 100).toFixed(2);
+    percentageStored = ((percentageStored / (accounts.length - unlistedAccounts.length)) * 100).toFixed(2);
   }
   
   progressBar.style.width = percentageStored + "%";
