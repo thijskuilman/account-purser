@@ -27,6 +27,7 @@ function resetPurser() {
   listedAccountCount.innerText = '0';
   listedTable.innerHTML = "";
   unlistedTable.innerHTML = "";
+  statisticsDiv.innerHTML = "";
   processedQueries = 0;
   rawMessages = [];
 
@@ -42,8 +43,6 @@ function updateSigninStatus(isSignedIn) {
     let resultMessages = [];
     searchQueries.forEach(function(query) {
       performQuery(query, function(result) {
-        // result.forEach(function(resultObject) { resultObject.search_query = query; });
-
         queryStatistics.push({"query": query, "count": result.length});
 
         processedQueries++;
@@ -51,6 +50,7 @@ function updateSigninStatus(isSignedIn) {
         resultMessages = resultMessages.concat(result);
         if(processedQueries == searchQueries.length) {
           resultMessages = resultMessages.filter(item => { return item !== undefined });
+          resultMessages.forEach(function(resultObject) { resultObject.search_query = query; });
           resultMessages = removeDuplicatesBy(x => x.id, resultMessages);
           resultMessages = removeDuplicatesBy(x => x.threadId, resultMessages);
           getMessages(resultMessages);
@@ -311,6 +311,7 @@ function generateTable() {
       '<td><a target="_blank" href="http://' + account.website + '">' + account.website + '</a></td>' +
       '<td class="text-' + tableClass +'  table-' + tableClass + '">' + storedString + '</td>' +
       '<td><button class="btn btn-light" onclick="toggleAccountListing(\'' + accountId + '\')" >Toggle listing</button></td>'
+      // + '<td>' + account.search_query + '</td>'
       // + '<td>' + account.date + '</td>'
       // + '<td>' + account.fromEmail + '</td>'
       // + '<td>' + account.body + '</td>';
@@ -366,7 +367,6 @@ function updateProgressBar(accounts) {
 }
 
 function setStatistics() {
-  let statisticsDiv = document.getElementById('statistics-content');
   queryStatistics.forEach(function(statistic) {
     statisticsDiv.innerHTML += "<strong>" + statistic.query + ": </strong> " + statistic.count + "<br>"
   });

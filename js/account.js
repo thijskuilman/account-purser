@@ -1,5 +1,6 @@
 let listedTable = document.getElementById('listed-account-table-body');
 let unlistedTable = document.getElementById('unlisted-account-table-body');
+let statisticsDiv = document.getElementById('statistics-content');
 
 let listedAccountCount = document.getElementById("listedAccountCount");
 let unlistedAccountCount = document.getElementById("unlistedAccountCount");
