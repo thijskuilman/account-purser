@@ -1,12 +1,12 @@
 var ownedAccounts = [];
-var list = document.getElementById('messageTable');
-var accountCount = document.getElementById("accountCount");
+var list = document.getElementById('listed-account-table-body');
 var processedMessages = 0;
 var resultMessages = [];
 var loadingText = document.getElementById('loadingText');
 var loadingAnimation = document.getElementById('loadingAnimation');
 var app = document.getElementById('app');
 var dropzone = document.getElementById('drop_zone');
+let queryStatistics = [];
 
 // Reset list and perform searches again.
 function refreshList() {
@@ -26,6 +26,8 @@ function updateSigninStatus(isSignedIn) {
     searchQueries.forEach(function(query) {
       performQuery(query, function(result) {
         // result.forEach(function(resultObject) { resultObject.search_query = query; });
+
+        queryStatistics.push({"query": query, "count": result.length});
 
         processedQueries++;
         updateLoadingText(processedQueries, searchQueries.length);
@@ -263,7 +265,7 @@ function showMessage(element) {
 function generateTable() {
   loadingAnimation.style.display = 'none';
   dropzone.style.display = 'block';
-  accountCount.innerText = ownedAccounts.length;
+  listedAccountCount.innerText = ownedAccounts.length;
 
   // Add account rows
   ownedAccounts.forEach(function(account, index) {
@@ -283,6 +285,8 @@ function generateTable() {
 
     // Add row HTML to table
     var accountRow = document.createElement('tr');
+    var accountId = account.from + account.website;
+    accountRow.setAttribute("id", accountId)
     accountRow.innerHTML =  
       '<th scope="row">' + index + '</th>' + 
       '<td> <a href="#" class="mr-2">' +
@@ -290,7 +294,8 @@ function generateTable() {
             '</a> ' + account.from + '</td>' + 
       '<td>' + account.to + '</td>' + 
       '<td><a target="_blank" href="http://' + account.website + '">' + account.website + '</a></td>' +
-      '<td class="text-' + tableClass +'  table-' + tableClass + '">' + storedString + '</td>'
+      '<td class="text-' + tableClass +'  table-' + tableClass + '">' + storedString + '</td>' +
+      '<td><button class="btn btn-light" onclick="toggleAccountListing(\'' + accountId + '\')" >Toggle listing</button></td>'
       // + '<td>' + account.date + '</td>'
       // + '<td>' + account.fromEmail + '</td>'
       // + '<td>' + account.body + '</td>';
@@ -303,7 +308,11 @@ function generateTable() {
     updateProgressBar(ownedAccounts);
     getNonStoredPasswords();
   }
-  
+
+  if(!passwords) {
+    initializeUnlistedAccounts();
+    setStatistics();
+  }
 }
 
 function getNonStoredPasswords() {
@@ -339,4 +348,11 @@ function updateProgressBar(accounts) {
   
   progressBar.style.width = percentageStored + "%";
   progressBar.innerHTML = percentageStored + "% stored";
+}
+
+function setStatistics() {
+  let statisticsDiv = document.getElementById('statistics-content');
+  queryStatistics.forEach(function(statistic) {
+    statisticsDiv.innerHTML += "<strong>" + statistic.query + ": </strong> " + statistic.count + "<br>"
+  });
 }

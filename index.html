@@ -37,26 +37,73 @@
               </div>
             </div>
                       
-            <h2 class="mb-3 mt-4">List of your accounts (<span id="accountCount">0</span>)</h2>
+            <h2 class="mb-3 mt-4">Results</h2>
 
             <div class="progress mt-4 mb-4 bg-danger" id="progressBar" style="display: none">
               <div class="progress-bar bg-success" id="progressBarStored" role="progressbar" style="width: 25%;" aria-valuemin="0" aria-valuemax="100">25% stored</div>
             </div>
-            
-            <table id="accountsTable" class="table table-hover">
-              <thead>
-                <tr>
-                  <th scope="col" data-sort-method='none'>#</th>
-                  <th scope="col">Title</th>
-                  <th scope="col">Account</th>
-                  <th scope="col">Website</th>
-                  <th scope="col">Stored in Password Manager</th>
-                </tr>
-              </thead>
-              <tbody id="messageTable">
-              </tbody>
-            </table>
 
+            <!-- Tabs -->
+            <ul class="nav nav-tabs" id="myTab" role="tablist">
+              <li class="nav-item" onclick="changeTab('listed-accounts')">
+                <a class="nav-link active" id="listed-accounts-tab" data-toggle="tab" role="tab" href="#">
+                  Listed accounts (<span id="listedAccountCount">0</span>)
+                </a>
+              </li>
+              <li class="nav-item" onclick="changeTab('unlisted-accounts')">
+                <a class="nav-link" id="unlisted-accounts-tab" data-toggle="tab" role="tab" href="#">
+                  Unlisted accounts (<span id="unlistedAccountCount">0</span>)
+                </a>
+              </li>
+              <li class="nav-item" onclick="changeTab('statistics')">
+                <a class="nav-link" id="statistics-tab" data-toggle="tab" role="tab" href="#">
+                  Statistics
+                </a>
+              </li>
+            </ul>
+
+            <!-- Listed accounts -->
+            <div id="listed-accounts-content">
+              <table id="listed-accounts-table" class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col" data-sort-method='none'>#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Account</th>
+                    <th scope="col">Website</th>
+                    <th scope="col">Stored in Password Manager</th>
+                     <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="listed-account-table-body">
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Unlisted accounts -->
+            <div id="unlisted-accounts-content" style="display: none">
+              <table id="unlisted-accounts-table" class="table table-hover">
+                <thead>
+                  <tr>
+                    <th scope="col" data-sort-method='none'>#</th>
+                    <th scope="col">Title</th>
+                    <th scope="col">Account</th>
+                    <th scope="col">Website</th>
+                    <th scope="col">Stored in Password Manager</th>
+                  </tr>
+                </thead>
+                <tbody id="unlisted-account-table-body">
+                </tbody>
+              </table>
+            </div>
+
+
+            <!-- Statistics -->
+            <div id="statistics-content" class="pt-3" style="display: none">
+              <div class="mb-3">Query result count:</div>
+            </div>
+
+            <!-- Loading -->
             <div id="loadingAnimation">
               <div class="spinner mt-5">
                 <div class="double-bounce1"></div>
@@ -70,17 +117,19 @@
       </div>
     </div>
 
+    <script type="text/javascript" src="/js/account.js"></script>
     <script type="text/javascript" src="/js/filedropper.js"></script>
     <script type="text/javascript" src="/search_queries.js"></script>
     <script type="text/javascript" src="/js/tablesort.js"></script>
     <script type="text/javascript" src="/js/purser.js"></script>
     <script type="text/javascript" src="/js/gmail-api.js"></script>
+    <script type="text/javascript" src="/js/navtab.js"></script>
 
     <script async defer src="https://apis.google.com/js/api.js" onload="this.onload=function(){};handleClientLoad()" onreadystatechange="if (this.readyState === 'complete') this.onload()">
     </script>
 
     <script type="text/javascript">
-      new Tablesort(document.getElementById('accountsTable'));
+      new Tablesort(document.getElementById('listed-accounts-table'));
     </script>
   </body>
 </html>
