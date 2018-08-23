@@ -22,8 +22,22 @@ function updateSigninStatus(isSignedIn) {
     signoutButton.style.display = 'block';
     loadingAnimation.style.display = 'block';
     app.style.display = 'block';
+    let resultMessages = [];
+    searchQueries.forEach(function(query) {
+      performQuery(query, function(result) {
+        // result.forEach(function(resultObject) { resultObject.search_query = query; });
 
-    searchMessages(searchQueries, getMessages);
+        processedQueries++;
+        updateLoadingText(processedQueries, searchQueries.length);
+        resultMessages = resultMessages.concat(result);
+        if(processedQueries == searchQueries.length) {
+          resultMessages = removeDuplicatesBy(x => x.id, resultMessages);
+          resultMessages = removeDuplicatesBy(x => x.threadId, resultMessages);
+          getMessages(resultMessages);
+        }
+      });
+    });
+    
   } else {
     authorizeButton.style.display = 'block';
     signoutButton.style.display = 'none';
@@ -31,40 +45,51 @@ function updateSigninStatus(isSignedIn) {
   }
 }
 
-// Search for messages in your inbox
-function searchMessages(queries, callback) {
-  var processedQueries = 0;
-
-  queries.forEach(function(query) {
-    var getPageOfMessages = function(request, result) {
-      console.log(request);
-      request.execute(function(resp) {
-        result = result.concat(resp.messages);
-        var nextPageToken = resp.nextPageToken;
-        if (nextPageToken) {
-          request = gapi.client.gmail.users.messages.list({
-            'userId': 'me',
-            'pageToken': nextPageToken,
-            'q': query
-          });
-          getPageOfMessages(request, result);
-        } else {  
-          processedQueries++;
-          loadingText.innerText = "Find accounts.. " + Math.round((processedQueries / queries.length) * 100) + "%";
-          result.forEach(function(resultObject) { resultObject.search_query = query; });
-          resultMessages = resultMessages.concat(result);
-          if(processedQueries == queries.length) {
-            getMessages(resultMessages);
-          }
-        }
-      });
-    };
-    var initialRequest = gapi.client.gmail.users.messages.list({
-      'userId': 'me',
-      'q': query
-    });
-    getPageOfMessages(initialRequest, []);
+function removeDuplicatesBy(keyFn, array) {
+  var mySet = new Set();
+  return array.filter(function(x) {
+    var key = keyFn(x), isNew = !mySet.has(key);
+    if (isNew) mySet.add(key);
+    return isNew;
   });
+}
+
+let processedQueries = 0;
+
+/**
+ * Retrieve Messages in user's mailbox matching query.
+ *
+ * @param  {String} userId User's email address. The special value 'me'
+ * can be used to indicate the authenticated user.
+ * @param  {String} query String used to filter the Messages listed.
+ * @param  {Function} callback Function to call when the request is complete.
+ */
+function performQuery(query, callback) {
+  var getPageOfMessages = function(request, result) {
+    request.execute(function(resp) {
+      result = result.concat(resp.messages);
+      var nextPageToken = resp.nextPageToken;
+      if (nextPageToken) {
+        request = gapi.client.gmail.users.messages.list({
+          'userId': 'me',
+          'pageToken': nextPageToken,
+          'q': query
+        });
+        getPageOfMessages(request, result);
+      } else {
+        callback(result);
+      }
+    });
+  };
+  var initialRequest = gapi.client.gmail.users.messages.list({
+    'userId': 'me',
+    'q': query
+  });
+  getPageOfMessages(initialRequest, []);
+}
+
+function updateLoadingText(current, max) {
+  loadingText.innerText = "Find accounts.. " + Math.round((current / max) * 100) + "%";
 }
 
 var rawMessages = [];
@@ -78,7 +103,7 @@ function getMessages(messages) {
 
     if(message === undefined) {
       processedRequests++;
-      if(processedRequests >= resultMessages.length) {
+      if(processedRequests >= messages.length) {
         formatMessagesQueue();
       }
       return;
@@ -96,7 +121,7 @@ function getMessages(messages) {
       processedRequests++;
 
       loadingText.innerText = "Getting account details.. " + Math.round((processedRequests / messages.length) * 100) + "%";
-      if(processedRequests >= resultMessages.length) {
+      if(processedRequests >= messages.length) {
         formatMessagesQueue();
       }
     });
@@ -112,7 +137,9 @@ function formatMessagesQueue() {
     }));
   }, Promise.resolve());
 
-  messageQueue.then(() => generateTable())
+  messageQueue.then(function() {
+      generateTable()
+  })
 }
 
 // Add a formatted message to ownedAccounts
@@ -125,9 +152,17 @@ function formatMessage(message, callback) {
     'from': '',
     'fromEmail': '',
     'website': '',
+    'date': '',
     'stored': false,
     'search_query': message.search_query,
   }
+
+  try {
+    messageObject.date = message.payload.headers.find(headerItem => headerItem.name === 'Date').value;
+  } catch (error) {
+    callback();
+  }
+
   // Get the subject
   try {
     messageObject.title = message.payload.headers.find(headerItem => headerItem.name === 'Subject' || headerItem.name === 'subject').value
@@ -148,14 +183,26 @@ function formatMessage(message, callback) {
   } catch (error) {
     callback();
   }
-
-  messageObject.fromEmail = (sender.substring( sender.indexOf( '<' ) + 1, sender.indexOf( '>' ))).trim();
-  messageObject.from = (sender.replace('<' + messageObject.fromEmail + '>', '').replace('"', '').replace('"', '')).trim();
+  
+  if (sender.indexOf('<') > -1 && sender.indexOf('>') > -1) {
+    messageObject.fromEmail = (sender.substring( sender.indexOf( '<' ) + 1, sender.indexOf( '>' ))).trim();
+    messageObject.from = (sender.replace('<' + messageObject.fromEmail + '>', '').replace('"', '').replace('"', '')).trim();
+  } else {
+    messageObject.fromEmail = sender;
+    messageObject.from = sender;
+  }
 
   // Get the website of the sender, based on the email address or name
   messageObject.website = (messageObject.fromEmail).split('@')[1];
   if(!messageObject.website) { 
     messageObject.website = (messageObject.from).split('@')[1]; 
+  }
+
+  if(messageObject.website == "gmail.com") {
+    messageObject.website = (messageObject.fromEmail).split('@')[0];
+    if(!messageObject.website) { 
+      messageObject.website = (messageObject.from).split('@')[0]; 
+    }
   }
   
   // If the sender name is empty or an email: retrieve name based on email
@@ -188,7 +235,7 @@ function formatMessage(message, callback) {
 
   // Remove message if it's a duplicate 
   var isDuplicate = false;
-  duplicateCheck = ['from', 'website', 'title']
+  duplicateCheck = ['from', 'website']
 
   duplicateCheck.forEach(function(key) {
     if(ownedAccounts.find(item => (item[key]).toLowerCase() === (messageObject[key]).toLowerCase())) {
@@ -244,6 +291,8 @@ function generateTable() {
       '<td>' + account.to + '</td>' + 
       '<td><a target="_blank" href="http://' + account.website + '">' + account.website + '</a></td>' +
       '<td class="text-' + tableClass +'  table-' + tableClass + '">' + storedString + '</td>'
+      // + '<td>' + account.date + '</td>'
+      // + '<td>' + account.fromEmail + '</td>'
       // + '<td>' + account.body + '</td>';
       // '<strong>' + account.search_query + "</strong>: " + account.title + '" | | "' + account.body;
 
@@ -268,7 +317,12 @@ function getNonStoredPasswords() {
   formattedNonStored.forEach(function (processedString) {
     nonStored = nonStored.replace(processedString, "");
   });
-  console.log(nonStored);
+
+  var websiteNames = nonStored.match(/website=.*/gm);
+  var titles = nonStored.match(/title=.*/gm);
+
+  console.log(websiteNames);
+  console.log(titles);
 }
 
 // Show percentage of stored accounts
