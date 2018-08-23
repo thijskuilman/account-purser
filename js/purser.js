@@ -7,12 +7,29 @@ var loadingAnimation = document.getElementById('loadingAnimation');
 var app = document.getElementById('app');
 var dropzone = document.getElementById('drop_zone');
 let queryStatistics = [];
+let processedQueries = 0;
+var rawMessages = [];
 
 // Reset list and perform searches again.
 function refreshList() {
   list.innerHTML = '';
   ownedAccounts = [];
   formatMessagesQueue();
+}
+
+function resetPurser() {
+  localStorage.clear();
+  resultMessages = [];
+  ownedAccounts = [];
+  queryStatistics = [];
+  processedMessages = 0;
+  unlistedAccounts = [];
+  listedAccountCount.innerText = '0';
+  listedTable.innerHTML = "";
+  unlistedTable.innerHTML = "";
+  processedQueries = 0;
+  rawMessages = [];
+
 }
 
 // Update UI after succesful sign in
@@ -33,6 +50,7 @@ function updateSigninStatus(isSignedIn) {
         updateLoadingText(processedQueries, searchQueries.length);
         resultMessages = resultMessages.concat(result);
         if(processedQueries == searchQueries.length) {
+          resultMessages = resultMessages.filter(item => { return item !== undefined });
           resultMessages = removeDuplicatesBy(x => x.id, resultMessages);
           resultMessages = removeDuplicatesBy(x => x.threadId, resultMessages);
           getMessages(resultMessages);
@@ -41,6 +59,7 @@ function updateSigninStatus(isSignedIn) {
     });
     
   } else {
+    resetPurser();
     authorizeButton.style.display = 'block';
     signoutButton.style.display = 'none';
     app.style.display = 'none';
@@ -55,8 +74,6 @@ function removeDuplicatesBy(keyFn, array) {
     return isNew;
   });
 }
-
-let processedQueries = 0;
 
 /**
  * Retrieve Messages in user's mailbox matching query.
@@ -93,8 +110,6 @@ function performQuery(query, callback) {
 function updateLoadingText(current, max) {
   loadingText.innerText = "Find accounts.. " + Math.round((current / max) * 100) + "%";
 }
-
-var rawMessages = [];
 
 // Get message details
 function getMessages(messages) {
