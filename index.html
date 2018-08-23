@@ -10,7 +10,7 @@
     <link rel="stylesheet" type="text/css" href="/css/animation.css">
   </head>
   <body>
-    <div class="container">
+    <div class="container" style="max-width: 1500px">
       <div class="row">
         <div class="col-sm">
           <div class="card text-white bg-primary mb-4 mt-3">
@@ -65,7 +65,7 @@
 
             <!-- Listed accounts -->
             <div id="listed-accounts-content">
-              <table id="listed-accounts-table" class="table table-hover">
+              <table id="listed-accounts-table" class="table table-hover table-responsive">
                 <thead>
                   <tr>
                     <th scope="col" data-sort-method='none'>#</th>
@@ -73,7 +73,8 @@
                     <th scope="col">Account</th>
                     <th scope="col">Website</th>
                     <th scope="col">Stored in Password Manager</th>
-                     <th scope="col">Actions</th>
+                    <th scope="col">Query</th>
+                    <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody id="listed-account-table-body">
@@ -138,5 +139,9 @@
 <style type="text/css">
   .highlight {
     background-color: yellow;
+  }
+
+  @media (min-width: 1200px).container {
+    max-width: 1500px;
   }
 </style>

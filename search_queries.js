@@ -6,7 +6,6 @@ var searchQueries = [
 	// GDPR
 	'"gdpr"',
 	'"privacy" {"updated" "updating" "geüpdatet"}',
-	// '{"privacywet" "privacy wetgeving"}',
 
 	// Thanks
 	'"you for" {"registering" "signing up"}',

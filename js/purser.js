@@ -45,12 +45,13 @@ function updateSigninStatus(isSignedIn) {
       performQuery(query, function(result) {
         queryStatistics.push({"query": query, "count": result.length});
 
+        result = result.filter(item => { return item !== undefined });
+        result.forEach(function(resultObject) { resultObject.search_query = query; });
+
         processedQueries++;
         updateLoadingText(processedQueries, searchQueries.length);
         resultMessages = resultMessages.concat(result);
         if(processedQueries == searchQueries.length) {
-          resultMessages = resultMessages.filter(item => { return item !== undefined });
-          resultMessages.forEach(function(resultObject) { resultObject.search_query = query; });
           resultMessages = removeDuplicatesBy(x => x.id, resultMessages);
           resultMessages = removeDuplicatesBy(x => x.threadId, resultMessages);
           getMessages(resultMessages);
@@ -310,6 +311,7 @@ function generateTable() {
       '<td>' + account.to + '</td>' + 
       '<td><a target="_blank" href="http://' + account.website + '">' + account.website + '</a></td>' +
       '<td class="text-' + tableClass +'  table-' + tableClass + '">' + storedString + '</td>' +
+      '<td class="text-muted small">' + account.search_query.substring(0,40) + '..</td>' +
       '<td><button class="btn btn-light" onclick="toggleAccountListing(\'' + accountId + '\')" >Toggle listing</button></td>'
       // + '<td>' + account.search_query + '</td>'
       // + '<td>' + account.date + '</td>'
