@@ -26,8 +26,8 @@ var searchQueries = [
 	'"nieuw account"',
 
 	// Welcome
-	"Welcome to",
-	"Welkom",
+	'"Welcome to"',
+	'"Welkom"',
 
 	// Passwords
 	'"reset" "password"',

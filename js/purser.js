@@ -37,6 +37,7 @@ function searchMessages(queries, callback) {
 
   queries.forEach(function(query) {
     var getPageOfMessages = function(request, result) {
+      console.log(request);
       request.execute(function(resp) {
         result = result.concat(resp.messages);
         var nextPageToken = resp.nextPageToken;
@@ -171,11 +172,17 @@ function formatMessage(message, callback) {
   // Check if account is stored in password manager
   if(passwords) {
     if(messageObject.website) {
-      if(passwords.search((messageObject.website).toLowerCase()) > 0) { messageObject.stored = true };
+      if(passwords.search((messageObject.website).toLowerCase()) > 0) { 
+        messageObject.stored = true;
+        passwords = passwords.replace((messageObject.website).toLowerCase(), "ISPROCESSED");
+      };
     }
     
     if(messageObject.from) {
-      if(passwords.search((messageObject.from).toLowerCase()) > 0) { messageObject.stored = true };
+      if(passwords.search((messageObject.from).toLowerCase()) > 0) { 
+        messageObject.stored = true;
+        passwords = passwords.replace((messageObject.from).toLowerCase(), "ISPROCESSED");
+      };
     }
   }
 
@@ -245,8 +252,23 @@ function generateTable() {
 
   if(passwords) {
     updateProgressBar(ownedAccounts);
+    getNonStoredPasswords();
   }
   
+}
+
+function getNonStoredPasswords() {
+  var nonStored = passwords;
+  var processedStrings = passwords.match(/.*ISPROCESSED.*/gm);
+  processedStrings.forEach(function (processedString) {
+    nonStored = nonStored.replace(processedString, "");
+  });
+
+  var formattedNonStored = passwords.match(/.*ISPROCESSED.*/gm);
+  formattedNonStored.forEach(function (processedString) {
+    nonStored = nonStored.replace(processedString, "");
+  });
+  console.log(nonStored);
 }
 
 // Show percentage of stored accounts
