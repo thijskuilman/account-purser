@@ -1,4 +1,6 @@
-![](https://user-images.githubusercontent.com/3017676/38424019-ffb04316-39af-11e8-9a67-655746a3be9c.png)
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/3017676/47713102-ba33be80-dc39-11e8-9e35-733c3b891b23.png">
+</p>
 
 # Account Purser
 Account Purser is a self-hosted web application which scans your Gmail inbox to generate a list of all accounts you own. You can also gain insight into your security by checking which accounts are stored in your password manager, for example 1Password and LastPass.
