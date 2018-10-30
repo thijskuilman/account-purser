@@ -9,6 +9,7 @@ Account Purser is a self-hosted web application which scans your Gmail inbox to 
 3. Your accounts will be presented in a table. You can see the account name, email address and website
 
 Optionally you can check which accounts are stored in your password manager:
+
 4. Drag an export file of your password manager in Purser
 5. The list of accounts will now show if the account is found in the export file
 
@@ -35,7 +36,7 @@ I completely understand if you're wary of using an application like this; the re
 5. Load the URL http://localhost:8000/ into your browser.
 
 # Contribute
-# Add new search queries
+## Add new search queries
 You can add new search queries in the `search_queries.js` file. Add quotes (") to be more precise with your search queries.
 
 ![screenshot from 2018-04-07 22-32-44](https://user-images.githubusercontent.com/3017676/38460098-a3fdc6f6-3ab3-11e8-84ce-92a0c9c0949e.png)
